@@ -93,27 +93,34 @@ export default function Horse({ name, index }: HorseProps) {
   useEffect(() => {
     if (gameState === "started") {
       dotLottie?.play();
-      setPosition(randomInt(speed[0], speed[1]));
+      const boost = randomInt(speed[0] * 7, speed[1] * 7);
+      setPosition(boost);
     }
   }, [gameState]);
 
   useEffect(() => {
-    if (gameState !== "started") {
-      return;
-    }
+    if (gameState !== "started") return;
+
+    let speedNow = 0;
+    let targetSpeed = randomInt(speed[0], speed[1]);
 
     const interval = setInterval(() => {
-      const moveTo = randomInt(speed[0], speed[1]);
-      setPosition((prev) => {
-        const next = prev + moveTo;
-        if (next >= raceLong) {
-          return raceLong;
-        }
-        return next;
-      });
-    }, 1000);
+      targetSpeed = randomInt(speed[0], speed[1]); // random tujuan baru
+    }, 500); // tiap 2 detik ganti target
 
-    return () => clearInterval(interval);
+    const frame = setInterval(() => {
+      // Smooth menuju target
+      speedNow += (targetSpeed - speedNow) * 0.2;
+      setPosition((prev) => {
+        const next = prev + speedNow;
+        return next >= raceLong ? raceLong : next;
+      });
+    }, 100); // update tiap 0.1 detik
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(frame);
+    };
   }, [gameState, raceLong, speed]);
 
   useEffect(() => {

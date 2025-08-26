@@ -5,7 +5,7 @@ import { useApp } from "../app";
 
 const playerHeight = 50;
 export const defaultDistance = 2000;
-export const defaultSpeed: [number, number] = [50, 80];
+export const defaultSpeed: [number, number] = [30, 50];
 const defaultPlayers = `Player 1\nPlayer 2\nPlayer 3\nPlayer 4`;
 
 export function ArenaProvider({ children }: { children: React.ReactNode }) {

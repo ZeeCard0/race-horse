@@ -4,10 +4,8 @@ import { useRef, useState, type ButtonHTMLAttributes } from "react";
 import { useArena } from "@/context/arena";
 import { cleanNames, cn } from "@/lib/utils";
 import { useGameUI } from "@/context/game-ui";
-import { useApp } from "@/context/app";
 
 export default function ListName() {
-  const { clearSearchParams } = useApp();
   const { players, setPlayers, newGame, updateSearchParams } = useArena();
   const { rawNames, setRawNames, setIsShareModalOpen, setGameSettingsKey } =
     useGameUI();
@@ -77,7 +75,7 @@ export default function ListName() {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 basis-full md:basis-[40%]">
       <div className="flex flex-col h-full w-[50%] md:w-xs bg-gray-700 rounded-2xl shadow-md shadow-gray-600 overflow-hidden">
         <div className="pt-4 pb-2 px-4 bg-gray-800">
           <div className="text-sm font-medium tracking-widest font-mono ">
