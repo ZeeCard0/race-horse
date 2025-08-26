@@ -8,9 +8,11 @@ import {
 interface GameUI {
   rawNames: string;
   isShareModalOpen: boolean;
+  gameSettingsKey: string;
 
   setRawNames: Dispatch<SetStateAction<string>>;
   setIsShareModalOpen: Dispatch<SetStateAction<boolean>>;
+  setGameSettingsKey: Dispatch<SetStateAction<string>>;
 }
 
 const GameUiContext = createContext<GameUI | undefined>(undefined);

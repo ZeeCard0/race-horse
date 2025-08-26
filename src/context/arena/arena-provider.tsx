@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
 import { ArenaContext, type GameState } from "./arena-context";
+import { compressData } from "@/lib/utils";
+import { useApp } from "../app";
 
 const playerHeight = 50;
+export const defaultDistance = 2000;
+export const defaultSpeed: [number, number] = [50, 80];
+const defaultPlayers = `Player 1\nPlayer 2\nPlayer 3\nPlayer 4`;
 
 export function ArenaProvider({ children }: { children: React.ReactNode }) {
   const [playerGap, setPlayerGap] = useState(0);
   const [gameState, setGameState] = useState<GameState>("not-started");
-  const [distance, setDistance] = useState(2000);
+  const [distance, setDistance] = useState(defaultDistance);
   const [isCameraMove, setIsCameraMove] = useState(false);
   const [winner, setWinner] = useState<string>();
   const [currentFaster, _setCurrentFaster] = useState(0);
   const [isCountdown, setIsCountdown] = useState(false);
+  const [speed, setSpeed] = useState<[number, number]>(defaultSpeed);
   const [players, _setPlayers] = useState<string[]>([]);
+  const [isSearchParamReaded, setIsSearchParamReaded] = useState(false);
+
+  const { setDataSearchParams, getDataSearchParams, clearSearchParams } =
+    useApp();
 
   const setPlayers = (names: string[]) => {
     if (!names?.length) {
@@ -46,6 +56,42 @@ export function ArenaProvider({ children }: { children: React.ReactNode }) {
     setIsCountdown(false);
   };
 
+  const updateSearchParams = () => {
+    const compressedData = compressData({
+      players: players,
+      distance: distance,
+      speed: speed,
+    });
+
+    setDataSearchParams(compressedData);
+  };
+
+  const newGame = () => {
+    clearSearchParams();
+    retry();
+    setSpeed(defaultSpeed);
+    setDistance(defaultDistance);
+    setPlayers([]);
+  };
+
+  useEffect(() => {
+    if (isSearchParamReaded) return;
+
+    const data = getDataSearchParams();
+
+    if (!data) {
+      _setPlayers(defaultPlayers.split("\n"));
+      setDistance(defaultDistance);
+      setSpeed(defaultSpeed);
+    } else {
+      setPlayers(data.players);
+      setDistance(data.distance);
+      setSpeed(data.speed);
+    }
+
+    setIsSearchParamReaded(true);
+  }, [isSearchParamReaded]);
+
   useEffect(() => {
     if (!isCountdown) return;
 
@@ -53,7 +99,6 @@ export function ArenaProvider({ children }: { children: React.ReactNode }) {
       setIsCountdown(false);
     }
   }, [gameState, isCountdown]);
-
 
   return (
     <ArenaContext.Provider
@@ -67,6 +112,8 @@ export function ArenaProvider({ children }: { children: React.ReactNode }) {
         isCameraMove,
         currentFaster,
         isCountdown,
+        speed,
+        isSearchParamReaded,
 
         setPlayerGap,
         setGameState,
@@ -76,7 +123,10 @@ export function ArenaProvider({ children }: { children: React.ReactNode }) {
         setIsCameraMove,
         setCurrentFaster,
         startCountdown,
+        setSpeed,
         retry,
+        updateSearchParams,
+        newGame,
       }}
     >
       {children}

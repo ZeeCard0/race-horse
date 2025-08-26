@@ -44,6 +44,7 @@ export default function Horse({ name, index }: HorseProps) {
     playerGap,
     distance,
     winner,
+    speed,
     setWinner,
     setGameState,
     setCurrentFaster,
@@ -92,7 +93,7 @@ export default function Horse({ name, index }: HorseProps) {
   useEffect(() => {
     if (gameState === "started") {
       dotLottie?.play();
-      setPosition(randomInt(130, 150));
+      setPosition(randomInt(speed[0], speed[1]));
     }
   }, [gameState]);
 
@@ -102,7 +103,7 @@ export default function Horse({ name, index }: HorseProps) {
     }
 
     const interval = setInterval(() => {
-      const moveTo = raceLong / randomInt(10, 20);
+      const moveTo = randomInt(speed[0], speed[1]);
       setPosition((prev) => {
         const next = prev + moveTo;
         if (next >= raceLong) {
@@ -113,7 +114,7 @@ export default function Horse({ name, index }: HorseProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [gameState, raceLong]);
+  }, [gameState, raceLong, speed]);
 
   useEffect(() => {
     let to: NodeJS.Timeout;
@@ -195,7 +196,10 @@ export default function Horse({ name, index }: HorseProps) {
       }}
       animate={{ x: position }}
       style={{
-        top: playerCount <= 2 && index === 0 ? "25%" : index * playerGap - playerHeight / 4,
+        top:
+          playerCount <= 2 && index === 0
+            ? "25%"
+            : index * playerGap - playerHeight / 4,
         height: `${playerHeight}px`,
         x,
       }}

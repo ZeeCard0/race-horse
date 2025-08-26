@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useArena, playerBoxWidth } from "@/context/arena";
 
 export default function Camera({ children }: React.PropsWithChildren) {
-  const [isMove, setIsMove] = useState(false);
-  const [cameraX, setCameraX] = useState(0);
-
   const { distance, gameState, currentFaster, playerHeight, players } =
     useArena();
+
+  const [isMove, setIsMove] = useState(false);
+  const [cameraX, setCameraX] = useState(0);
 
   const finalX = useMemo(
     () => distance - window.innerWidth + playerBoxWidth + 16,

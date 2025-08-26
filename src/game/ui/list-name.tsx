@@ -1,18 +1,18 @@
 import { useDebounceCallback } from "usehooks-ts";
 import { Icon } from "@iconify/react";
-import { useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
+import { useRef, useState, type ButtonHTMLAttributes } from "react";
 import { useArena } from "@/context/arena";
-import { cleanNames, cn, compressData } from "@/lib/utils";
+import { cleanNames, cn } from "@/lib/utils";
 import { useGameUI } from "@/context/game-ui";
 import { useApp } from "@/context/app";
-// import { getShortenUrl } from "@/lib/networks";
 
 export default function ListName() {
+  const { clearSearchParams } = useApp();
+  const { players, setPlayers, newGame, updateSearchParams } = useArena();
+  const { rawNames, setRawNames, setIsShareModalOpen, setGameSettingsKey } =
+    useGameUI();
+
   const [lastSort, setLastSort] = useState("ASC");
-  const { players, setPlayers, retry, distance, setDistance } = useArena();
-  const { rawNames, setRawNames, setIsShareModalOpen } = useGameUI();
-  const { setDataSearchParams, getDataSearchParams, clearSearchParams } =
-    useApp();
 
   const textRef = useRef<HTMLTextAreaElement>(null);
 
@@ -60,49 +60,25 @@ export default function ListName() {
     setRawNames(stringNames);
   };
 
-  const newGame = () => {
-    if (!textRef.current?.value) return;
-    textRef.current.value = "";
+  const createNewGame = () => {
+    newGame();
     setRawNames("");
-    setPlayers([]);
-    retry();
+    setGameSettingsKey(Date.now().toString());
 
-    clearSearchParams();
+    if (!textRef.current?.value) return;
+
+    textRef.current.value = "";
+
   };
 
   const share = async () => {
-    const compressedData = compressData({
-      players: players,
-      distance: distance,
-      speed: [0, 0],
-    });
-
-    setDataSearchParams(compressedData);
-
-    navigator.clipboard.writeText(window.location.toString());
-
-    // const link =  await getShortenUrl(window.location.toString());
-
+    updateSearchParams();
     setIsShareModalOpen(true);
   };
 
-  useEffect(() => {
-    if (!textRef.current?.value) return;
-
-    const data = getDataSearchParams();
-
-    if (!data) return;
-
-    const dataString = data.players.join("\n");
-    setRawNames(dataString);
-    setPlayers(data.players);
-    setDistance(data.distance);
-    textRef.current.value = dataString;
-  }, []);
-
   return (
     <div className="flex gap-2">
-      <div className="flex flex-col h-full  w-xs bg-gray-700 rounded-2xl shadow-md shadow-gray-600 overflow-hidden">
+      <div className="flex flex-col h-full w-[50%] md:w-xs bg-gray-700 rounded-2xl shadow-md shadow-gray-600 overflow-hidden">
         <div className="pt-4 pb-2 px-4 bg-gray-800">
           <div className="text-sm font-medium tracking-widest font-mono ">
             Name List
@@ -132,11 +108,11 @@ export default function ListName() {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 w-[40%] md:w-auto">
         <ActionButton
           text="New Race"
           icon={<Icon icon="mdi:horse-variant-fast" />}
-          onClick={newGame}
+          onClick={createNewGame}
           className="border-2 border-gray-600/20"
         />
         <ActionButton
@@ -200,7 +176,7 @@ function ActionButton({
       disabled={disabled}
       {...props}
     >
-      {icon} {text}
+      <div className="shrink-0">{icon}</div> {text}
     </button>
   );
 }

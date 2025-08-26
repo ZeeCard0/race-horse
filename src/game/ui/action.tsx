@@ -5,11 +5,18 @@ import { cn } from "@/lib/utils";
 
 export default function Action() {
   const [count, setCount] = useState(-1);
-  const { setGameState, gameState, players, startCountdown } = useArena();
+  const {
+    setGameState,
+    gameState,
+    players,
+    startCountdown,
+    updateSearchParams,
+  } = useArena();
 
   const canStart = players.length >= 2;
 
   const start = () => {
+    updateSearchParams();
     setCount(3);
     startCountdown();
   };

@@ -24,6 +24,8 @@ interface Arena {
   isCameraMove: boolean;
   currentFaster: number;
   isCountdown: boolean;
+  speed: [number, number];
+  isSearchParamReaded: boolean;
 
   setPlayerGap: (playerGap: number) => void;
   setGameState: (gameState: GameState) => void;
@@ -33,7 +35,10 @@ interface Arena {
   setIsCameraMove: (isCameraMove: boolean) => void;
   setCurrentFaster: (currentFaster: number) => void;
   startCountdown: () => void;
+  setSpeed: (speed: [number, number]) => void;
   retry: () => void;
+  newGame: () => void;
+  updateSearchParams: () => void;
 }
 
 const ArenaContext = createContext<Arena | undefined>(undefined);

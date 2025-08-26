@@ -1,8 +1,8 @@
 import { useArena } from "@/context/arena";
 import { motion } from "motion/react";
-import Content from "./content";
 import { useGameUI } from "@/context/game-ui";
 import ShareModal from "./share-modal";
+import GameUiContent from "./game-ui-content";
 
 export default function UI() {
   const { gameState, winner, retry, isCountdown, setPlayers } = useArena();
@@ -20,7 +20,7 @@ export default function UI() {
 
   return (
     <div className="w-full grow flex p-4">
-      {gameState === "not-started" && !isCountdown && <Content />}
+      {gameState === "not-started" && !isCountdown && <GameUiContent />}
 
       {gameState === "finished" && winner && (
         <motion.div

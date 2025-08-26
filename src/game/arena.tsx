@@ -13,7 +13,6 @@ export default function Arena() {
   useEffect(() => {
     if (!arenaRef.current) return;
 
-    
     const arenaHeight = arenaRef.current.clientHeight;
 
     const arenaAreaUsage =
@@ -47,8 +46,8 @@ export default function Arena() {
         </div>
       </div>
       <div
-        className="absolute bottom-0 w-full h-6 bg-linear-to-t from-black to-transparent"
-        style={{ width: distance + playerBoxWidth + 50 }}
+        className="absolute bottom-0 h-6 bg-linear-to-t from-black to-transparent"
+        style={{ width: distance * 1.5 + playerBoxWidth + 50 }}
       />
     </>
   );
