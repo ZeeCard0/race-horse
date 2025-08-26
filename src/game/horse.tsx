@@ -93,6 +93,7 @@ export default function Horse({ name, index }: HorseProps) {
   useEffect(() => {
     if (gameState === "started") {
       dotLottie?.play();
+      dotLottie?.setSpeed(0.5);
       const boost = randomInt(speed[0] * 7, speed[1] * 7);
       setPosition(boost);
     }
@@ -115,6 +116,15 @@ export default function Horse({ name, index }: HorseProps) {
         const next = prev + speedNow;
         return next >= raceLong ? raceLong : next;
       });
+
+      // Update animasi berdasarkan speed
+      if (dotLottie) {
+        const min = speed[0];
+        const max = speed[1];
+        const ratio = (speedNow - min) / (max - min); // normalize ke 0..1
+        const animSpeed = 0.5 + ratio * 1.0; // 0.5..1.5
+        dotLottie.setSpeed(animSpeed);
+      }
     }, 100); // update tiap 0.1 detik
 
     return () => {
