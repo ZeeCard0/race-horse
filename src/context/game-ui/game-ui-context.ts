@@ -1,0 +1,24 @@
+import {
+  createContext,
+  useContext,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+
+interface GameUI {
+  rawNames: string;
+
+  setRawNames: Dispatch<SetStateAction<string>>;
+}
+
+const GameUiContext = createContext<GameUI | undefined>(undefined);
+
+const useGameUI = () => {
+  const context = useContext(GameUiContext);
+  if (context === undefined) {
+    throw new Error("useGameUI must be used within a GameUiProvider");
+  }
+  return context;
+};
+
+export { GameUiContext, useGameUI };
