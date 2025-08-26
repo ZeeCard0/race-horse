@@ -1,19 +1,29 @@
-import { useArena, defaultDistance } from "@/context/arena";
-import { useEffect, useRef, useState } from "react";
+import { useArena, defaultDistance, defaultSpeed } from "@/context/arena";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDebounceValue } from "usehooks-ts";
 
 export default function GameSettings() {
-  const { distance, speed, isSearchParamReaded, setDistance } = useArena();
+  const { distance, speed, setSpeed, isSearchParamReaded, setDistance } =
+    useArena();
 
   const [trackLong, setTrackLong] = useState(distance);
-  const [trackSpeed, setTrackSpeed] = useState();
+  const [trackSpeedMin, setTrackSpeedMin] = useState(speed[0]);
+  const [trackSpeedMax, setTrackSpeedMax] = useState(speed[1]);
 
-  const waitDataFromArena = useRef<boolean>(true);
+  const waitDistanceFromArena = useRef<boolean>(true);
+  const waitSpeedFromArena = useRef<boolean>(true);
 
   const [trackLongDebounced] = useDebounceValue(trackLong, 200);
+  const [trackSpeedMinDebounced] = useDebounceValue(trackSpeedMin, 200);
+  const [trackSpeedMaxDebounced] = useDebounceValue(trackSpeedMax, 200);
 
   const resetDistance = () => {
     setTrackLong(defaultDistance);
+  };
+
+  const resetSpeed = () => {
+    setTrackSpeedMin(defaultSpeed[0]);
+    setTrackSpeedMax(defaultSpeed[1]);
   };
 
   useEffect(() => {
@@ -21,13 +31,50 @@ export default function GameSettings() {
   }, [trackLongDebounced]);
 
   useEffect(() => {
-    if (!isSearchParamReaded || !waitDataFromArena.current) {
+    setSpeed([trackSpeedMinDebounced, trackSpeedMaxDebounced]);
+  }, [trackSpeedMinDebounced, trackSpeedMaxDebounced]);
+
+  useEffect(() => {
+    if (!isSearchParamReaded || !waitDistanceFromArena.current) {
       return;
     }
 
     setTrackLong(distance);
-    waitDataFromArena.current = false;
+    waitDistanceFromArena.current = false;
   }, [distance, isSearchParamReaded]);
+
+  useEffect(() => {
+    if (!isSearchParamReaded || !waitSpeedFromArena.current) {
+      return;
+    }
+
+    setTrackSpeedMin(speed[0]);
+    setTrackSpeedMax(speed[1]);
+    waitSpeedFromArena.current = false;
+  }, [speed, isSearchParamReaded]);
+
+  const speedMinChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const current = parseInt(e.target.value);
+      if (trackSpeedMax - current < 10) {
+        setTrackSpeedMax(current + 10);
+      }
+
+      setTrackSpeedMin(parseInt(e.target.value));
+    },
+    [trackSpeedMax]
+  );
+
+  const speedMaxChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const current = parseInt(e.target.value);
+      if (current - trackSpeedMin < 10) {
+        setTrackSpeedMin(current - 10);
+      }
+      setTrackSpeedMax(parseInt(e.target.value));
+    },
+    [trackSpeedMin]
+  );
 
   return (
     <>
@@ -67,32 +114,42 @@ export default function GameSettings() {
               Control the distance the players must race
             </p>
           </div>
-          <div className="flex grow p-4 gap-2 w-full">
-            <div className="relative grow">
-              <input
-                type="range"
-                className="w-full"
-                min={1000}
-                max={5000}
-                step={100}
-                //   value={trackLong}
-                //   onChange={(e) => setTrackLong(parseInt(e.target.value))}
-              />
-              <input
-                type="range"
-                className="-scale-100 w-full"
-                min={1000}
-                max={5000}
-                step={100}
-                //   value={trackLong}
-                //   onChange={(e) => setTrackLong(parseInt(e.target.value))}
-              />
+          <div className="flex flex-col w-full">
+            <div className="flex grow p-4 gap-2 w-full">
+              <div className="relative grow flex gap-2">
+                <span className="shrink-0 text-sm">Min</span>
+                <input
+                  type="range"
+                  className="w-full"
+                  min={10}
+                  max={90}
+                  step={1}
+                  value={trackSpeedMin}
+                  onChange={speedMinChange}
+                />
+                <span className="shrink-0 text-sm">{trackSpeedMin}</span>
+              </div>
             </div>
-            <span>{trackLong}m</span>
+            <div className="flex grow p-4 gap-2 w-full">
+              <div className="relative grow flex gap-2">
+                <span className="shrink-0 text-sm">Max</span>
+                <input
+                  type="range"
+                  className="-scale-100 w-full"
+                  min={20}
+                  max={100}
+                  step={1}
+                  value={trackSpeedMax}
+                  onChange={speedMaxChange}
+                />
+              </div>
+              <span className="shrink-0 text-sm">{trackSpeedMax}</span>
+            </div>
           </div>
+
           <button
             className="bg-gray-600 text-gray-300 px-4 py-2 rounded-full hover:bg-gray-800 hover:drop-shadow-md transition-colors text-xs mb-4"
-            onClick={resetDistance}
+            onClick={resetSpeed}
           >
             Reset
           </button>

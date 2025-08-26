@@ -58,11 +58,10 @@ function Share() {
                   Link
                 </div>
                 <input
-                  value="https://example.com/?d=alsddiejf4i5mnff"
+                  value={data?.shorturl}
                   contentEditable={false}
                   className="focus:outline-none grow bg-gray-600 px-2"
                   onFocus={copy}
-                  onChange={() => {}}
                 />
                 <button
                   className="flex items-center gap-1.5 shrink-0 rounded-r-2xl border border-gray-600 px-3 hover:bg-gray-700 transition-colors"
