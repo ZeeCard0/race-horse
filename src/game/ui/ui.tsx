@@ -1,7 +1,7 @@
 import { useArena } from "@/context/arena";
 import { motion } from "motion/react";
 import Content from "./content";
-import { useGameUI } from "@/context/game-ui/game-ui-context";
+import { useGameUI } from "@/context/game-ui";
 
 export default function UI() {
   const { gameState, winner, retry, isCountdown, setPlayers } = useArena();

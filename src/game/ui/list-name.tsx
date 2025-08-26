@@ -1,13 +1,13 @@
-import { useGameUI } from "@/context/game-ui/game-ui-context";
 import { useDebounceCallback } from "usehooks-ts";
 import { Icon } from "@iconify/react";
 import { useRef, useState, type ButtonHTMLAttributes } from "react";
 import { useArena } from "@/context/arena";
 import { cleanNames, cn } from "@/lib/utils";
+import { useGameUI } from "@/context/game-ui";
 
 export default function ListName() {
   const [lastSort, setLastSort] = useState("ASC");
-  const { setPlayers, reset } = useArena();
+  const { setPlayers, retry } = useArena();
   const { rawNames, setRawNames } = useGameUI();
 
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -61,7 +61,7 @@ export default function ListName() {
     textRef.current.value = "";
     setRawNames("");
     setPlayers([]);
-    reset();
+    retry();
   };
 
   return (
