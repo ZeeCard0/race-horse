@@ -7,6 +7,7 @@ const defaultPlayers = `Player 1\nPlayer 2\nPlayer 3\nPlayer 4`;
 
 export function GameUiProvider({ children }: { children: React.ReactNode }) {
   const [rawNames, setRawNames] = useState(defaultPlayers);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const { players, setPlayers } = useArena();
 
@@ -24,7 +25,9 @@ export function GameUiProvider({ children }: { children: React.ReactNode }) {
   }, [rawNames]);
 
   return (
-    <GameUiContext.Provider value={{ rawNames, setRawNames }}>
+    <GameUiContext.Provider
+      value={{ rawNames, isShareModalOpen, setRawNames, setIsShareModalOpen }}
+    >
       {children}
     </GameUiContext.Provider>
   );

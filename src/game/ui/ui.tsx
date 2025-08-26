@@ -2,6 +2,7 @@ import { useArena } from "@/context/arena";
 import { motion } from "motion/react";
 import Content from "./content";
 import { useGameUI } from "@/context/game-ui";
+import ShareModal from "./share-modal";
 
 export default function UI() {
   const { gameState, winner, retry, isCountdown, setPlayers } = useArena();
@@ -59,6 +60,7 @@ export default function UI() {
           </motion.div>
         </div>
       )}
+      <ShareModal />
     </div>
   );
 }

@@ -54,6 +54,7 @@ export function ArenaProvider({ children }: { children: React.ReactNode }) {
     }
   }, [gameState, isCountdown]);
 
+
   return (
     <ArenaContext.Provider
       value={{

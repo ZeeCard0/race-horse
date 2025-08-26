@@ -1,10 +1,14 @@
+import { AppProvider } from "./context/app";
+import { ToastProvider } from "./context/toast";
 import Game from "./game";
 
 function App() {
   return (
-    <div>
-      <Game />
-    </div>
+    <ToastProvider>
+      <AppProvider>
+        <Game />
+      </AppProvider>
+    </ToastProvider>
   );
 }
 

@@ -1,14 +1,18 @@
 import { useDebounceCallback } from "usehooks-ts";
 import { Icon } from "@iconify/react";
-import { useRef, useState, type ButtonHTMLAttributes } from "react";
+import { useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
 import { useArena } from "@/context/arena";
-import { cleanNames, cn } from "@/lib/utils";
+import { cleanNames, cn, compressData } from "@/lib/utils";
 import { useGameUI } from "@/context/game-ui";
+import { useApp } from "@/context/app";
+// import { getShortenUrl } from "@/lib/networks";
 
 export default function ListName() {
   const [lastSort, setLastSort] = useState("ASC");
-  const { setPlayers, retry } = useArena();
-  const { rawNames, setRawNames } = useGameUI();
+  const { players, setPlayers, retry, distance, setDistance } = useArena();
+  const { rawNames, setRawNames, setIsShareModalOpen } = useGameUI();
+  const { setDataSearchParams, getDataSearchParams, clearSearchParams } =
+    useApp();
 
   const textRef = useRef<HTMLTextAreaElement>(null);
 
@@ -62,7 +66,39 @@ export default function ListName() {
     setRawNames("");
     setPlayers([]);
     retry();
+
+    clearSearchParams();
   };
+
+  const share = async () => {
+    const compressedData = compressData({
+      players: players,
+      distance: distance,
+      speed: [0, 0],
+    });
+
+    setDataSearchParams(compressedData);
+
+    navigator.clipboard.writeText(window.location.toString());
+
+    // const link =  await getShortenUrl(window.location.toString());
+
+    setIsShareModalOpen(true);
+  };
+
+  useEffect(() => {
+    if (!textRef.current?.value) return;
+
+    const data = getDataSearchParams();
+
+    if (!data) return;
+
+    const dataString = data.players.join("\n");
+    setRawNames(dataString);
+    setPlayers(data.players);
+    setDistance(data.distance);
+    textRef.current.value = dataString;
+  }, []);
 
   return (
     <div className="flex gap-2">
@@ -82,6 +118,14 @@ export default function ListName() {
             defaultValue={rawNames}
             className="focus:outline-none py-2 px-4 h-full min-h-60 w-full resize-none placeholder:text-gray-600 font-mono"
             placeholder={`Player 1\nPlayer 2\nPlayer 3`}
+            onInput={(e) => {
+              if (e.currentTarget?.value) {
+                e.currentTarget.value = e.currentTarget.value.replace(
+                  /[^a-zA-Z0-9\r\n ]/g,
+                  ""
+                );
+              }
+            }}
             onChange={(e) => {
               setRawNameDebounced(e.target.value);
             }}
@@ -99,7 +143,7 @@ export default function ListName() {
           text="Shuffle"
           icon={<Icon icon="solar:shuffle-outline" />}
           onClick={shuffle}
-          disabled={!rawNames.length}
+          disabled={!rawNames.length || players.length < 2}
         />
         <ActionButton
           text="Sort"
@@ -111,13 +155,20 @@ export default function ListName() {
             )
           }
           onClick={sort}
-          disabled={!rawNames.length}
+          disabled={!rawNames.length || players.length < 2}
         />
         <ActionButton
-          text="Duplicate"
+          text="Make Unique"
           icon={<Icon icon="solar:trash-bin-minimalistic-outline" />}
           onClick={removeDuplicate}
-          disabled={!rawNames.length}
+          disabled={!rawNames.length || players.length < 2}
+        />
+
+        <ActionButton
+          text="Share"
+          icon={<Icon icon="solar:share-linear" />}
+          onClick={share}
+          disabled={!rawNames.length || players.length < 2}
         />
       </div>
     </div>
@@ -139,7 +190,7 @@ function ActionButton({
   return (
     <button
       className={cn(
-        "flex items-center justify-center gap-1 py-2 px-4 text-sm font-mono rounded-full text-gray-400 transition-colors",
+        "flex items-center justify-center gap-1 py-2 px-4 text-sm font-mono rounded-full text-gray-400 transition-all",
         {
           "bg-gray-600/20 hover:bg-gray-600": !disabled,
           "bg-gray-600/50 opacity-30": disabled,

@@ -1,4 +1,4 @@
-import { GameUiProvider } from "@/context/game-ui/game-ui-provider";
+import { GameUiProvider } from "@/context/game-ui";
 import UI from "./ui";
 
 export default function GameUi() {
