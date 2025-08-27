@@ -107,11 +107,11 @@ export default function Horse({ name, index }: HorseProps) {
 
     const interval = setInterval(() => {
       targetSpeed = randomInt(speed[0], speed[1]); // random tujuan baru
-    }, 500); // tiap 2 detik ganti target
+    }, 1000); // tiap 2 detik ganti target
 
     const frame = setInterval(() => {
       // Smooth menuju target
-      speedNow += (targetSpeed - speedNow) * 0.2;
+      speedNow += (targetSpeed - speedNow) * 0.1;
       setPosition((prev) => {
         const next = prev + speedNow;
         return next >= raceLong ? raceLong : next;
