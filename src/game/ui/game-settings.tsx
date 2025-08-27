@@ -111,7 +111,8 @@ export default function GameSettings() {
           <div className="pt-4 pb-2 px-4 bg-gray-800 w-full">
             <h2 className="text-sm font-medium tracking-widest">Horse Speed</h2>
             <p className="text-xs text-gray-400 font-mono">
-              Control the distance the players must race
+              Set the min and max speed. Horses will run with random speeds
+              within this range, changing over time so each runs differently.
             </p>
           </div>
           <div className="flex flex-col w-full">
