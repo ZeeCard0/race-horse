@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useGameUI } from "@/context/game-ui";
 import ShareModal from "./share-modal";
 import GameUiContent from "./game-ui-content";
+import { Icon } from "@iconify/react";
 
 export default function UI() {
   const { gameState, winner, retry, isCountdown, setPlayers } = useArena();
@@ -19,8 +20,17 @@ export default function UI() {
   };
 
   return (
-    <div className="w-full grow flex p-4">
+    <div className="w-full grow flex flex-col p-4">
       {gameState === "not-started" && !isCountdown && <GameUiContent />}
+      <div className="w-[100vw] flex justify-center p-6">
+        <a
+          href="https://github.com/ZeeCard0/race-horse"
+          target="_blank"
+          className="flex justify-center items-center gap-1 tex-sm"
+        >
+          <Icon icon="mdi:github" className="text-lg" /> GitHub
+        </a>
+      </div>
 
       {gameState === "finished" && winner && (
         <motion.div
